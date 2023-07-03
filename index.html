@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный блог</title>
+    <!-- Подключаем стили -->
+    <link rel="stylesheet" href="styles/reset.css">
+    <link rel="stylesheet" href="styles/index.css">
+    <!-- Подключаем шрифты -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="inputs-block-wrapper">
+            <h2 class="block-title">Новый пост</h2>
+            <input 
+                id="" class="post-title-input" 
+                type="text" name=""
+                placeholder="Заголовок">
+            <textarea 
+                id="" 
+                class="post-text-input" 
+                name="" 
+                cols="30" 
+                rows="10"
+                placeholder="Напиши пост">
+            </textarea>
+            <!-- Элемент, в который выводятся ошибки -->
+            <div id="validation-output" class="validation-output">Здесь будут выводиться ошибки</div>
+            <button id = "" class="punlication-button">Опубликовать</button>
+        </div>
+        <div class="posts-block-wrapper">
+            <h2 class="block-title">Лента</h2>
+            <div class="posts">Тут пока пусто...</div>
+        </div>
+    </div>
+    <script src="scripts/index.js"></script>
+</body>
+</html>
