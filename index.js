@@ -79,13 +79,13 @@ function getPostFromUser() {
 
 // Получение измененного поста из полей ввода
 function getChangedPostFromUser() {
-	const title = changePostTitleInput.value;
-	const text = changePostTextInput.value;
-	const date = setPostDate() + CHANGED_POST_LABEL;
+	const changedTitle = changePostTitleInput.value;
+	const changedText = changePostTextInput.value;
+	const changedDate = setPostDate() + CHANGED_POST_LABEL;
 	return {
-		date: date,
-		title: title,
-		text: text
+		date: changedDate,
+		title: changedTitle,
+		text: changedText
 	};
 }
 
