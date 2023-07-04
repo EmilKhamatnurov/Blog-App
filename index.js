@@ -21,6 +21,7 @@ const sortOptionInputNode = document.querySelector('#sort-select');
 const posts = [];
 // Переменная, которая хранит индекс изменяющегося поста
 let changingPostId;
+
 init()
 
 // Функция инициализации приложения
@@ -28,45 +29,33 @@ function init() {
 	changingPostId = -1;
 	clearPostInputs();
 }
-// Отработка кнопки "Опубликовать"
-newPostBtnNode.addEventListener('click', function () {
+
+// Функция добавления поста
+function addPost() {
 	const postFromUser = getPostFromUser(); 
 	// Проверили содержимое полей ввода
 	if (!checkInputsData(postFromUser)) {
 		return
 	} 
-	addPost(postFromUser);
+	addPostToMassive(postFromUser);
 	renderError();
 	clearPostInputs();
 	sortPostsByField(sortOptionInputNode.value);
-});
-// Отработчик кнопки изменить пост
-changePostButton.addEventListener('click', function () {
+};
+
+// Функция изменения поста
+function changePost() {
 	const changedPost = getChangedPost(changingPostId);
 	if (!checkInputsData(changedPost)) {
 		return
 	} 
-	insertNewPost(changingPostId, changedPost);
+	insertChangedPost(changingPostId, changedPost);
 	renderError();
 	togglePopup();
 	resetChangingPostIndex();
 	sortPostsByField(sortOptionInputNode.value);
-});
+}
 
-sortOptionInputNode.addEventListener('change', function () {
-	sortPostsByField(sortOptionInputNode.value);
-	renderPosts();
-});
-
-postTitleInputNode.addEventListener('input', (event) => {
-	titleSignInputCounter.innerText = `${event.target.value.length}/100`; // счетчик символов поля ввода
-})
-postTextInputNode.addEventListener('input', (event) => {
-	textSignInputCounter.innerText = `${event.target.value.length}/200`; // счетчик символов поля ввода
-})
-
-
-// _____ FUNCTIONS _____
 // Получение данных из полей ввода
 function isEmptyInput() {
 	const movieFromUser = getMovieFromUser();
@@ -75,6 +64,8 @@ function isEmptyInput() {
 		return true;
 	}
 }
+
+// Получение поста из полей ввода
 function getPostFromUser() {
 	const title = postTitleInputNode.value;
 	const text = postTextInputNode.value;
@@ -84,8 +75,9 @@ function getPostFromUser() {
 		title: title,
 		text: text
 	};
-}
+};
 
+// Получение измененного поста из полей ввода
 function getChangedPostFromUser() {
 	const title = changePostTitleInput.value;
 	const text = changePostTextInput.value;
@@ -96,71 +88,66 @@ function getChangedPostFromUser() {
 		text: text
 	};
 }
-// Генерации даты поста  1000 и 1 способ :(
+
+//функция получения текущей даты и времени
 function setPostDate() {
-	const dateFormat = new Date();
-
-	const dd = fixDateFormat(dateFormat.getDate()); // день
-	const mm = fixDateFormat(dateFormat.getMonth()); // месяц
-	const yyyy = fixDateFormat(dateFormat.getFullYear()); // год
-	const hours = fixDateFormat(dateFormat.getHours()); //часы
-	const minutes = fixDateFormat(dateFormat.getMinutes()); // минуты
-	const seconds = fixDateFormat(dateFormat.getSeconds()); // секунды
-
-	//Подставляем значения дня, недели и месяца и возвращаем дату в нужном формате
-	const date = `${dd}.${mm}.${yyyy} ${hours}:${minutes}:${seconds}`;
-	return date;
+	const date = new Date();
+	
+	return date.toLocaleString('ru-RU', {
+		day: 'numeric', 
+		month: 'numeric', 
+		year: 'numeric'}) + 
+		' ' + 
+		date.toLocaleString('ru-RU', {
+		hour: 'numeric', 
+		minute: 'numeric', 
+		second: 'numeric'});
 }
 
-function fixDateFormat(date) {
-	const stringDate = date.toString();
-	if (stringDate.length == 1) {
-		return `0${date}`
- 	} 
-	else {
-		return `${date}`
-	}
-}
 // Добавления поста в список объектов постов
-function addPost({date, title, text}) {
+function addPostToMassive({date, title, text}) {
 	posts.push({
 		date,
 		title,
 		text
 	});
 }
+
 // Функция получения содержимого поста
 function getPost() {
 	return posts;
 }
+
 // Отображение постов на странице
 function renderPosts() {
 	// Генерация поста
 	const posts = getPost();
 	// const lastPostIndex = posts.length -1;
-	let postsHTML = '';
+	let postsMarkup = '';
 	// Добавление постов
 	for (let index = 0; index < posts.length; index++) {
-		postsHTML += ` 
+		postsMarkup += ` 
 			<div class = "post" id = "${index}"> 
-				<p class = "post__time">${posts[index].date.slice(0, 16)}</p>
+				<p class = "post__time">${posts[index].date}</p>
 				<p class = "post__title">${posts[index].title}</p>
 				<p class = "post__text">${posts[index].text}</p>
 			</div>
 		`;	
 	
 	}
-	(posts.length == 0) ? postsNode.innerHTML = 'Лента пуста...' : postsNode.innerHTML = postsHTML;
+	(posts.length == 0) ? postsNode.innerHTML = 'Лента пуста...' : postsNode.innerHTML = postsMarkup;
 	//Добавление кнопок для постов
 	renderPostButtons(posts);
-		
 }
+// Функция создания и добавления кнопок удаления и изменения
 function renderPostButtons(posts) {
+	//Для всех постов создаются и добавляются кнопки с отработчиками событий 
 	for (let index = 0; index < posts.length; index++) {
 		post_container = document.getElementById(`${index}`);
 		const deleteBtn = createDeleteBtn();
 		const changeBtn = createChangeBtn(index);
 
+		// Добавления отработчиков событий для кнопок
 		deleteBtn.addEventListener('click', function () {
 			deletePost(index);
 		});
@@ -174,75 +161,86 @@ function renderPostButtons(posts) {
 		post_container.appendChild(deleteBtn);
 		post_container.appendChild(changeBtn);
 	}
-}
 
+}
+// Очистка полей ввода
 function clearPostInputs() {
 	postTitleInputNode.value = "";
 	postTextInputNode.value = "";
 	titleSignInputCounter.innerText = TITLE_COUNTER_LABEL;
 	textSignInputCounter.innerText = TEXT_COUNTER_LABEL;
 }
-// ФУНКЦИЯ УДАЛЕНИЯ ПОСТОВ
+
+// _____ Удаление поста _____
 // Создание кнопки удаления
 function createDeleteBtn() {
-	const deleteBtn = document.createElement('button');
-	deleteBtn.classList.add(CLASSNAME_OF_DELETE_BUTTON)
-	deleteBtn.innerText = DELETE_BUTTON_LABEL;
-	return deleteBtn;
+	const newDeleteBtn = document.createElement('button');
+	newDeleteBtn.classList.add(CLASSNAME_OF_DELETE_BUTTON)
+	newDeleteBtn.innerText = DELETE_BUTTON_LABEL;
+	return newDeleteBtn;
 }
+
 // Удаление поста по id
 function deletePost(id) {
 	posts.splice(id,1);
 	sortPostsByField(sortOptionInputNode.value);
 }
 
-// ФУНКЦИЯ ИЗМЕНЕНИЯ СОДЕРЖИМОГО ПОСТОВ
+// _____ Изменение поста _____
+//  Функция создания кнопки изменения поста
 function createChangeBtn(post_id) {
-	const changeBtn = document.createElement('button');
-	changeBtn.classList.add(CLASSNAME_OF_CHANGE_BUTTON)
-	changeBtn.innerText = CHANGE_BUTTON_LABEL;
-	changeBtn.dataset.post = post_id;
-	return changeBtn;
+	const newChangeBtn = document.createElement('button');
+	newChangeBtn.classList.add(CLASSNAME_OF_CHANGE_BUTTON)
+	newChangeBtn.innerText = CHANGE_BUTTON_LABEL;
+	newChangeBtn.dataset.post = post_id;
+	return newChangeBtn;
 }
+
 // Сброс индекса поста, который изменяют
 function resetChangingPostIndex() {
 	changingPostId = -1;
 }
 
+// Функция вставки содержимого поста в поля ввода PopUp-окна 
 function insertPostContent(post_id) {
 	const posts = getPost();
 	changePostTitleInput.value = posts[post_id].title;
 	changePostTextInput.value = posts[post_id].text;
 }
+
+// Функция получения измененого проста из полей ввода в PopUp-окне
 function getChangedPost() {
 	const newPostFromUser = getChangedPostFromUser();
 	return newPostFromUser;
 }
-function insertNewPost(post_id, changerPost) {
+
+// Функция вставки измененного поста в список постов
+function insertChangedPost(post_id, changedPost) {
 	const posts = getPost();
-	posts[post_id].title = changerPost.title;
-	posts[post_id].text = changerPost.text;
-	posts[post_id].date = changerPost.date;
+	posts[post_id].title = changedPost.title;
+	posts[post_id].text = changedPost.text;
+	posts[post_id].date = posts[post_id].date + CHANGED_POST_LABEL;
 }
+
 // Сортировка списка
 function sortPostsByField(field) {
 	const posts = getPost();
 	posts.sort(byField(field));
 	renderPosts();
 }
+
 // Сортировка по дате или по заголовку
 function byField(field) {
 // Сортировка по дате: позже -- пост выше
-// Сортировка по заголовку (по алфавиту), учитывается код символа
 	if (field === "date") {
 		return (a, b) => a[field] < b[field] ? 1 : -1;
 	}
+// Сортировка по заголовку (по алфавиту), учитывается код символа
 	if (field == "title") {
 		return (a, b) => a[field] > b[field] ? 1 : -1;
 	}
 }
   
-// ПРОВЕРКИ
 // Проверка данных в полях ввода
 function checkInputsData(postFromUser) {
 	const postTitle = postFromUser.title.replace(/^\s+|\s+$/g, '');
@@ -279,3 +277,29 @@ function renderError(typeError, inputLength) {
 			errorOutputNode.innerText = '';
 	}
 }
+
+// _____ Отработчики событий _____
+/* Отпработчики событий для кнопок удаления и 
+изменения поста находятся в функции "renderPostButtons"*/
+
+// Отработка кнопки "Опубликовать"
+newPostBtnNode.addEventListener('click', addPost);
+
+// Отработчик кнопки изменить пост
+changePostButton.addEventListener('click', changePost);
+
+// Отработка функции сортировки списка постов
+sortOptionInputNode.addEventListener('change', function () {
+	sortPostsByField(sortOptionInputNode.value);
+	renderPosts();
+});
+
+// Работа счетчика символов поля ввода заголовка поста
+postTitleInputNode.addEventListener('input', (event) => {
+	titleSignInputCounter.innerText = `${event.target.value.length}/100`; // счетчик символов поля ввода
+});
+
+// Работа счетчика символов поля ввода описания поста
+postTextInputNode.addEventListener('input', (event) => {
+	textSignInputCounter.innerText = `${event.target.value.length}/200`; // счетчик символов поля ввода
+});
