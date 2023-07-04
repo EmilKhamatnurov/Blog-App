@@ -56,15 +56,6 @@ function changePost() {
 	sortPostsByField(sortOptionInputNode.value);
 }
 
-// Получение данных из полей ввода
-function isEmptyInput() {
-	const movieFromUser = getMovieFromUser();
-	const movieLengthWithoutSpaces = movieFromUser['movieName'].trim().length;
-	if (movieLengthWithoutSpaces === 0) {
-		return true;
-	}
-}
-
 // Получение поста из полей ввода
 function getPostFromUser() {
 	const title = postTitleInputNode.value;
@@ -89,7 +80,7 @@ function getChangedPostFromUser() {
 	};
 }
 
-//функция получения текущей даты и времени
+// Функция получения текущей даты и времени
 function setPostDate() {
 	const date = new Date();
 	
@@ -120,11 +111,9 @@ function getPost() {
 
 // Отображение постов на странице
 function renderPosts() {
-	// Генерация поста
 	const posts = getPost();
-	// const lastPostIndex = posts.length -1;
 	let postsMarkup = '';
-	// Добавление постов
+	// Создание разметки постов с данными из массива posts
 	for (let index = 0; index < posts.length; index++) {
 		postsMarkup += ` 
 			<div class = "post" id = "${index}"> 
@@ -161,9 +150,9 @@ function renderPostButtons(posts) {
 		post_container.appendChild(deleteBtn);
 		post_container.appendChild(changeBtn);
 	}
-
 }
-// Очистка полей ввода
+
+// Очистка полей ввода и установка начального значения счетчикам символов
 function clearPostInputs() {
 	postTitleInputNode.value = "";
 	postTextInputNode.value = "";
@@ -171,7 +160,7 @@ function clearPostInputs() {
 	textSignInputCounter.innerText = TEXT_COUNTER_LABEL;
 }
 
-// _____ Удаление поста _____
+// _____ Функция удаление поста _____
 // Создание кнопки удаления
 function createDeleteBtn() {
 	const newDeleteBtn = document.createElement('button');
@@ -186,7 +175,7 @@ function deletePost(id) {
 	sortPostsByField(sortOptionInputNode.value);
 }
 
-// _____ Изменение поста _____
+// _____ Функция изменение поста _____
 //  Функция создания кнопки изменения поста
 function createChangeBtn(post_id) {
 	const newChangeBtn = document.createElement('button');
@@ -229,13 +218,13 @@ function sortPostsByField(field) {
 	renderPosts();
 }
 
-// Сортировка по дате или по заголовку
+// Сортировка по дате и по заголовку
 function byField(field) {
 // Сортировка по дате: позже -- пост выше
 	if (field === "date") {
 		return (a, b) => a[field] < b[field] ? 1 : -1;
 	}
-// Сортировка по заголовку (по алфавиту), учитывается код символа
+// Сортировка по заголовку (по алфавиту)
 	if (field == "title") {
 		return (a, b) => a[field] > b[field] ? 1 : -1;
 	}
