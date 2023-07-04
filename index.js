@@ -1,16 +1,10 @@
-// Константы
-// ERRORS
-const EMPTY_INPUT_ERROR = 'empty_input_error'
-const TITLE_LENGTH_ERROR = 'titleLenghtError';
-const TEXT_LENGTH_ERROR = 'textLenghtError';
-
 // DELETE AND CHANGE BUTTONS
 const DELETE_BUTTON_LABEL = 'Удалить пост';
 const CLASSNAME_OF_DELETE_BUTTON = 'post-delete-button';
 const CLASSNAME_OF_CHANGE_BUTTON = 'change-popup-btn';
 const CHANGE_BUTTON_LABEL = 'Изменить';
 const CHANGED_POST_LABEL = ' (Изменено)';
-
+// Строки для счетчиков
 const TITLE_COUNTER_LABEL = `0/100`;
 const TEXT_COUNTER_LABEL = `0/200`;
 // Ссылки на элементы страницы
@@ -36,13 +30,12 @@ function init() {
 }
 // Отработка кнопки "Опубликовать"
 newPostBtnNode.addEventListener('click', function () {
-	const postFromUser = getPostFromUser(); // можно добавить функцию AddNewPost
-	// Проверили сожержимое полей ввода
+	const postFromUser = getPostFromUser(); 
+	// Проверили содержимое полей ввода
 	if (!checkInputsData(postFromUser)) {
 		return
 	} 
 	addPost(postFromUser);
-	// renderPosts();
 	renderError();
 	clearPostInputs();
 	sortPostsByField(sortOptionInputNode.value);
@@ -115,7 +108,7 @@ function setPostDate() {
 	const seconds = fixDateFormat(dateFormat.getSeconds()); // секунды
 
 	//Подставляем значения дня, недели и месяца и возвращаем дату в нужном формате
-	let date = `${dd}.${mm}.${yyyy} ${hours}:${minutes}:${seconds}`;
+	const date = `${dd}.${mm}.${yyyy} ${hours}:${minutes}:${seconds}`;
 	return date;
 }
 
@@ -150,7 +143,7 @@ function renderPosts() {
 	for (let index = 0; index < posts.length; index++) {
 		postsHTML += ` 
 			<div class = "post" id = "${index}"> 
-				<p class = "post__time">${posts[index].date}</p>
+				<p class = "post__time">${posts[index].date.slice(0, 16)}</p>
 				<p class = "post__title">${posts[index].title}</p>
 				<p class = "post__text">${posts[index].text}</p>
 			</div>
@@ -211,7 +204,7 @@ function createChangeBtn(post_id) {
 	changeBtn.dataset.post = post_id;
 	return changeBtn;
 }
-
+// Сброс индекса поста, который изменяют
 function resetChangingPostIndex() {
 	changingPostId = -1;
 }
@@ -237,58 +230,49 @@ function sortPostsByField(field) {
 	posts.sort(byField(field));
 	renderPosts();
 }
+// Сортировка по дате или по заголовку
 function byField(field) {
-	return (a, b) => a[field] < b[field] ? 1 : -1;
+// Сортировка по дате: позже -- пост выше
+// Сортировка по заголовку (по алфавиту), учитывается код символа
+	if (field === "date") {
+		return (a, b) => a[field] < b[field] ? 1 : -1;
+	}
+	if (field == "title") {
+		return (a, b) => a[field] > b[field] ? 1 : -1;
+	}
 }
   
 // ПРОВЕРКИ
 // Проверка данных в полях ввода
 function checkInputsData(postFromUser) {
-	
-	const titleLength = postFromUser.title.length;
-	const textLength = postFromUser.text.length;
-	// if (isEmptyValue(postFromUser.title)) {
-	// 	renderError(EMPTY_INPUT_ERROR, titleLength);
-	// 	return false
-	// }
-	console.log(titleLength);
-	console.log(textLength);
-	if (titleLength > 100) {
-		// Рендер ошибки
-		renderError(TITLE_LENGTH_ERROR, titleLength);
-		return false
-	}
-	
-	if (isEmptyValue(postFromUser.text)) {
-		renderError(EMPTY_INPUT_ERROR, textLength);
-		return false
-	}
-	if (textLength > 200) {
-		// Рендер ошибки
-		renderError(TEXT_LENGTH_ERROR, textLength);
-		return false
-	}
+	const postTitle = postFromUser.title.replace(/^\s+|\s+$/g, '');
+	const postText = postFromUser.text.replace(/^\s+|\s+$/g, '');
 
+	if(!postTitle || !postText) {
+		renderError("emptyInputError", 0);
+		return false
+	}
+	if (postTitle.length > 100) {
+		renderError("titleLenghtError", postTitle.length);
+		return false
+	}
+	if (postText.length > 200) {
+		renderError("textLenghtError", postText.length);
+		return false
+	}
 	return true;
 }
-
-function isEmptyValue(value) {
-	const valueLengthWithoutSpaces = value.trim().length;
-	if (valueLengthWithoutSpaces === 0) {
-		return true;
-	}
-}
-
 
 // Рендер ошибок 
 function renderError(typeError, inputLength) {
 	switch (typeError) {
-		case EMPTY_INPUT_ERROR:
+		case "emptyInputError":
 			errorOutputNode.innerText = "Пустое поле";
-		case TITLE_LENGTH_ERROR:
+			break;
+		case "titleLenghtError":
 			errorOutputNode.innerText =  `Заголовок больше на ${inputLength - 100} симв.`;
 			break;
-		case TEXT_LENGTH_ERROR:
+		case "textLenghtError":
 			errorOutputNode.innerText =  `Пост больше на ${inputLength - 200} симв.`;
 			break;
 		default:
