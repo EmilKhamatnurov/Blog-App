@@ -285,7 +285,7 @@ function renderError(typeError, inputLength) {
 // Отработка кнопки "Опубликовать"
 newPostBtnNode.addEventListener('click', addPost);
 
-// Отработчик кнопки изменить пост
+// Отработчик кнопки "Изменить" в окне PopUp
 changePostButton.addEventListener('click', changePost);
 
 // Отработка функции сортировки списка постов
