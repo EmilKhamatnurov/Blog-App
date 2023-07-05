@@ -28,7 +28,7 @@
                         class="js-post-title-input input post-title-input" 
                         type="text" 
                         placeholder="Заголовок">
-                    <p class="js-title-input-counter title-input-counter">0/100</p>
+                    <p class="js-title-input-counter title-input-counter"></p>
                 </div>
                 <div class="text-input-wrapper">
                     <textarea 
@@ -39,7 +39,7 @@
                         placeholder="Напиши пост.."
                         >
                     </textarea>
-                    <p class="js-text-input-counter text-input-counter">0/200</p>
+                    <p class="js-text-input-counter text-input-counter"></p>
                 </div>
                 <button class="js-new-post-btn new-post-btn">Опубликовать</button>
                 <div class="js-error-output error-output"></div>
@@ -50,7 +50,7 @@
 			<h2 class="title posts-section__title">Лента</h2>
             <div class="select-wrapper">
                 <p class="sort-select-label">Сортировать по: </p>
-                <select id="sort-select" class="sort-select">
+                <select id="sort-select" class="js-sort-select sort-select">
                     <option value="date">Дата</option>
                     <option value="title">Заголовок</option>
                 </select>

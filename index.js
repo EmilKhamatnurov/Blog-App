@@ -5,8 +5,8 @@ const CLASSNAME_OF_CHANGE_BUTTON = 'change-popup-btn';
 const CHANGE_BUTTON_LABEL = 'Изменить';
 const CHANGED_POST_LABEL = ' (Изменено)';
 // Строки для счетчиков
-const TITLE_COUNTER_LABEL = `0/100`;
-const TEXT_COUNTER_LABEL = `0/200`;
+const TITLE_MAX_COUNTER_LABEL = `100`;
+const TEXT_MAX_COUNTER_LABEL = `200`;
 // Ссылки на элементы страницы
 const postTitleInputNode = document.querySelector('.js-post-title-input');
 const postTextInputNode = document.querySelector('.js-post-text-input');
@@ -15,7 +15,7 @@ const postsNode = document.querySelector('.js-posts');
 const errorOutputNode = document.querySelector('.js-error-output')
 const titleSignInputCounter = document.querySelector('.js-title-input-counter');
 const textSignInputCounter = document.querySelector('.js-text-input-counter');
-const sortOptionInputNode = document.querySelector('#sort-select');
+const sortOptionInputNode = document.querySelector('.js-sort-select');
 
 // Список постов
 const posts = [];
@@ -28,6 +28,14 @@ init()
 function init() {
 	changingPostId = -1;
 	clearPostInputs();
+	titleCounterLabel();
+}
+
+function titleCounterLabel() {
+	titleSignInputCounter.innerText = `${postTitleInputNode.value.length} / ${TITLE_MAX_COUNTER_LABEL}`;
+}
+function textCounterLabel() {
+	textSignInputCounter.innerText = `${postTextInputNode.value.length} / ${TEXT_MAX_COUNTER_LABEL}`;
 }
 
 // Функция добавления поста
@@ -124,7 +132,9 @@ function renderPosts() {
 		`;	
 	
 	}
-	(posts.length == 0) ? postsNode.innerHTML = 'Лента пуста...' : postsNode.innerHTML = postsMarkup;
+	(posts.length == 0) ? 
+		postsNode.innerHTML = 'Лента пуста...' : 
+		postsNode.innerHTML = postsMarkup;
 	//Добавление кнопок для постов
 	renderPostButtons(posts);
 }
@@ -156,8 +166,8 @@ function renderPostButtons(posts) {
 function clearPostInputs() {
 	postTitleInputNode.value = "";
 	postTextInputNode.value = "";
-	titleSignInputCounter.innerText = TITLE_COUNTER_LABEL;
-	textSignInputCounter.innerText = TEXT_COUNTER_LABEL;
+	titleCounterLabel();
+	textCounterLabel();
 }
 
 // _____ Функция удаление поста _____
@@ -226,7 +236,7 @@ function byField(field) {
 	}
 // Сортировка по заголовку (по алфавиту)
 if (field === "title") {
-	return (a, b) => a[field].localeCompare(b[field]);
+	return (a, b) => a[field].localeCompare(b[field]); // сортировка по алфавиту 
   }
 }
   
@@ -284,11 +294,7 @@ sortOptionInputNode.addEventListener('change', function () {
 });
 
 // Работа счетчика символов поля ввода заголовка поста
-postTitleInputNode.addEventListener('input', (event) => {
-	titleSignInputCounter.innerText = `${event.target.value.length}/100`; // счетчик символов поля ввода
-});
+postTitleInputNode.addEventListener('input',titleCounterLabel);
 
 // Работа счетчика символов поля ввода описания поста
-postTextInputNode.addEventListener('input', (event) => {
-	textSignInputCounter.innerText = `${event.target.value.length}/200`; // счетчик символов поля ввода
-});
+postTextInputNode.addEventListener('input',textCounterLabel);
