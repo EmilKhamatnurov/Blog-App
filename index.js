@@ -31,9 +31,12 @@ function init() {
 	titleCounterLabel();
 }
 
+//Функция счетчика символов заголовка поста
 function titleCounterLabel() {
 	titleSignInputCounter.innerText = `${postTitleInputNode.value.length} / ${TITLE_MAX_COUNTER_LABEL}`;
 }
+
+//Функция счетчика символов описания поста
 function textCounterLabel() {
 	textSignInputCounter.innerText = `${postTextInputNode.value.length} / ${TEXT_MAX_COUNTER_LABEL}`;
 }
