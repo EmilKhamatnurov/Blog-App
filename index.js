@@ -225,15 +225,15 @@ function byField(field) {
 		return (a, b) => a[field] < b[field] ? 1 : -1;
 	}
 // Сортировка по заголовку (по алфавиту)
-	if (field == "title") {
-		return (a, b) => a[field] > b[field] ? 1 : -1;
-	}
+if (field === "title") {
+	return (a, b) => a[field].localeCompare(b[field]);
+  }
 }
   
 // Проверка данных в полях ввода
 function checkInputsData(postFromUser) {
-	const postTitle = postFromUser.title.replace(/^\s+|\s+$/g, '');
-	const postText = postFromUser.text.replace(/^\s+|\s+$/g, '');
+	const postTitle = postFromUser.title.replace(/\s/g, '');
+	const postText = postFromUser.text.replace(/\s/g, '');
 
 	if(!postTitle || !postText) {
 		renderError("emptyInputError", 0);
