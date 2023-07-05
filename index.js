@@ -52,7 +52,13 @@ function addPost() {
 	renderError();
 	clearPostInputs();
 	sortPostsByField(sortOptionInputNode.value);
+	moveFocusToInput();
 };
+
+// Перемещение факуса на поле ввода заголовка поста
+function moveFocusToInput() {
+	postTitleInputNode.focus();
+}
 
 // Функция изменения поста
 function changePost() {
@@ -65,6 +71,7 @@ function changePost() {
 	togglePopup();
 	resetChangingPostIndex();
 	sortPostsByField(sortOptionInputNode.value);
+	moveFocusToInput();
 }
 
 // Получение поста из полей ввода
